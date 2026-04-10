@@ -1,5 +1,6 @@
 package com.example.financetracker.controller;
 
+import com.example.financetracker.dto.UserLoginDTO;
 import com.example.financetracker.dto.UserRegistrationDTO;
 import com.example.financetracker.service.UserService;
 import jakarta.validation.Valid;
@@ -20,5 +21,11 @@ public class AuthController {
         // @Valid checks if data is correct
         userService.registerUser(request.getName(), request.getEmail(), request.getPassword());
         return ResponseEntity.ok("User registered successfully!");
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> loginUser(@Valid @RequestBody UserLoginDTO request){
+        userService.loginUser(request.getName(), request.getPassword());
+        return ResponseEntity.ok("User logged in!");
     }
 }

@@ -35,4 +35,16 @@ public class UserService {
 
         appUserRepository.save(newUser);
     }
+
+
+    public AppUser loginUser(String name, String rawPassword){
+        // find user by name
+        AppUser user = appUserRepository.findByName(name)
+                .orElseThrow(() -> new RuntimeException("Wrong username or password"));
+
+        if(!passwordEncoder.matches(rawPassword, user.getPassword())){
+            throw new RuntimeException("Incorrect password!");
+        }
+        return user;
+    }
 }

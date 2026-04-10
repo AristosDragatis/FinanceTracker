@@ -1,11 +1,12 @@
 package com.example.financetracker.controller;
 
 import com.example.financetracker.domain.Transaction;
+import com.example.financetracker.dto.TransactionDTO;
 import com.example.financetracker.service.TransactionService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -20,12 +21,8 @@ public class TransactionController {
 
     // Add a transaction
     @PostMapping("/save_transaction")
-    public ResponseEntity<String> saveTransaction(
-            @RequestParam("userId") Long userId,
-            @RequestParam("categoryId") Long categoryId,
-            @RequestParam("amount") BigDecimal amount,
-            @RequestParam("description") String description){
-        transactionService.addTransaction(userId, categoryId, amount, description);
+    public ResponseEntity<String> saveTransaction(@Valid @RequestBody TransactionDTO request){
+        transactionService.addTransaction(request.getUserId(), request.getCategoryId(), request.getAmount(), request.getDescription());
         return ResponseEntity.ok("Transaction saved!");
     }
 
@@ -42,13 +39,9 @@ public class TransactionController {
     @PutMapping("/{transactionId}")
     public ResponseEntity<String> updateTransaction(
             @PathVariable Long transactionId,
-            @RequestParam("userId") Long userId,
-            @RequestParam("categoryId") Long categoryId,
-            @RequestParam("amount") BigDecimal amount,
-            @RequestParam("description") String description
-    ){
+            @Valid @RequestBody TransactionDTO request){
         // call the service layer to update the transaction
-        transactionService.updateTransaction(transactionId,userId,amount,categoryId,description);
+        transactionService.updateTransaction(transactionId, request.getUserId(),request.getAmount(),request.getCategoryId(), request.getDescription());
 
         return ResponseEntity.ok("Transaction updated successfully!");
     }

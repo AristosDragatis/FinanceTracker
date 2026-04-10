@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Size;
 
 public class UserRegistrationDTO {
 
+    public UserRegistrationDTO(){}
 
     @NotBlank(message = "Name is required!")
     private String name;
