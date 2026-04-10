@@ -1,4 +1,4 @@
-package com.example.financetracker.entity;
+package com.example.financetracker.domain;
 
 import jakarta.persistence.*;
 

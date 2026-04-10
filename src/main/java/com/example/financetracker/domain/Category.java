@@ -1,4 +1,4 @@
-package com.example.financetracker.entity;
+package com.example.financetracker.domain;
 
 import jakarta.persistence.*;
 
@@ -6,17 +6,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-public class AppUser {
+public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;
+    private String type; // e.g. Income or Expense
 
-    private String email;
-
-    @OneToMany(mappedBy = "appUser", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Transaction> transactions = new ArrayList<>();
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Transaction> transactions;
 
     public Long getId() {
         return id;
@@ -34,12 +33,12 @@ public class AppUser {
         this.name = name;
     }
 
-    public String getEmail() {
-        return email;
+    public String getType() {
+        return type;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setType(String type) {
+        this.type = type;
     }
 
     public List<Transaction> getTransactions() {
