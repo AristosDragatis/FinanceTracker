@@ -19,6 +19,7 @@ public class TransactionService {
     private final CategoryMapper categoryMapper;
     private final AppUserMapper appUserMapper;
 
+    // constructor injection
     public TransactionService(TransactionMapper transactionMapper,
                               CategoryMapper categoryMapper,
                               AppUserMapper appUserMapper){
@@ -27,6 +28,7 @@ public class TransactionService {
         this.transactionMapper = transactionMapper;
     }
 
+    // add a transaction
     @Transactional
     public Transaction addTransaction(Long userId, Long categoryId, BigDecimal amount, String description){
 
@@ -66,11 +68,11 @@ public class TransactionService {
             throw new RuntimeException("No permissions to delete this transaction!");
         }
 
-
         transactionMapper.delete(transaction);
     }
 
 
+    // update a transaction
     @Transactional
     public void updateTransaction(Long transactionId, Long userId, BigDecimal amount, Long categoryId, String description){
         Transaction transaction = transactionMapper.findById(transactionId)

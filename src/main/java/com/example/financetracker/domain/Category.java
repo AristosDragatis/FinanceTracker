@@ -3,7 +3,6 @@ package com.example.financetracker.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -13,7 +12,7 @@ public class Category {
     private Long id;
 
     private String name;
-    private String type; // e.g. Income or Expense
+    private String type;
 
     @JsonIgnore
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
