@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class TransactionService {
@@ -49,4 +50,46 @@ public class TransactionService {
         return transactionMapper.save(transaction);
     }
 
+    // User can see all their transactions
+    public List<Transaction> getUserTransactions(Long userId){
+        return transactionMapper.findByAppUserId(userId);
+    }
+
+
+    // delete a transaction
+    @Transactional
+    public void deleteTransaction(Long transactionId, Long userId){
+        Transaction transaction = transactionMapper.findById(transactionId)
+                .orElseThrow(() -> new RuntimeException("Transaction not found!"));
+
+        if(!transaction.getUser().getId().equals(userId)){
+            throw new RuntimeException("No permissions to delete this transaction!");
+        }
+
+
+        transactionMapper.delete(transaction);
+    }
+
+
+    @Transactional
+    public void updateTransaction(Long transactionId, Long userId, BigDecimal amount, Long categoryId, String description){
+        Transaction transaction = transactionMapper.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Transaction not found!"));
+
+
+        if(!transaction.getUser().getId().equals(userId)){
+            throw new RuntimeException("No permissions to update this transaction!");
+        }
+
+        Category category = categoryMapper.findById(categoryId)
+                        .orElseThrow(() -> new RuntimeException("Category not found!"));
+
+        transaction.setAmount(amount);
+        transaction.setCategory(category);
+        transaction.setDescription(description);
+        transaction.setDate(LocalDateTime.now());
+
+
+        transactionMapper.save(transaction);
+    }
 }
