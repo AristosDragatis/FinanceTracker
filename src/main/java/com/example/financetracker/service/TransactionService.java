@@ -73,7 +73,7 @@ public class TransactionService {
 
     @Transactional
     public void updateTransaction(Long transactionId, Long userId, BigDecimal amount, Long categoryId, String description){
-        Transaction transaction = transactionMapper.findById(userId)
+        Transaction transaction = transactionMapper.findById(transactionId)
                 .orElseThrow(() -> new RuntimeException("Transaction not found!"));
 
 
@@ -87,8 +87,6 @@ public class TransactionService {
         transaction.setAmount(amount);
         transaction.setCategory(category);
         transaction.setDescription(description);
-        transaction.setDate(LocalDateTime.now());
-
 
         transactionMapper.save(transaction);
     }
