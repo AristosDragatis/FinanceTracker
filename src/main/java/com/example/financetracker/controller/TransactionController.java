@@ -18,7 +18,6 @@ public class TransactionController {
         this.transactionService = transactionService;
     }
 
-
     // Add a transaction
     @PostMapping("/save_transaction")
     public ResponseEntity<String> saveTransaction(
@@ -30,17 +29,27 @@ public class TransactionController {
         return ResponseEntity.ok("Transaction saved!");
     }
 
+    // get all the transactions based on user ID
     @GetMapping("/{userId}")
-    public ResponseEntity<List<Transaction>> getUserTransactions(@PathVariable("userId") Long userId){
+    public ResponseEntity<List<Transaction>> getUserTransactions(@PathVariable Long userId){
         // call the service layer to bring the list of transactions
         List<Transaction> transactions = transactionService.getUserTransactions(userId);
 
         return ResponseEntity.ok(transactions);
     }
 
-    // @PutMapping
+    // update a transaction
+    @PutMapping("/{transactionId}")
+    public ResponseEntity<String> updateTransaction(
+            @PathVariable Long transactionId,
+            @RequestParam("userId") Long userId,
+            @RequestParam("categoryId") Long categoryId,
+            @RequestParam("amount") BigDecimal amount,
+            @RequestParam("description") String description
+    ){
+        // call the service layer to update the transaction
+        transactionService.updateTransaction(transactionId,userId,amount,categoryId,description);
 
-
-
-
+        return ResponseEntity.ok("Transaction updated successfully!");
+    }
 }
