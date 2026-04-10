@@ -1,12 +1,10 @@
 package com.example.financetracker.controller;
 
+import com.example.financetracker.dto.UserRegistrationDTO;
 import com.example.financetracker.service.UserService;
-import org.springframework.boot.webmvc.autoconfigure.WebMvcProperties;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -18,10 +16,9 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String>  registerUser(@RequestParam("name") String name, @RequestParam("email") String email, @RequestParam("password") String password){
-        userService.registerUser(name, email, password);
+    public ResponseEntity<String>  registerUser(@Valid @RequestBody UserRegistrationDTO request){
+        // @Valid checks if data is correct
+        userService.registerUser(request.getName(), request.getEmail(), request.getPassword());
         return ResponseEntity.ok("User registered successfully!");
     }
-
-
 }
