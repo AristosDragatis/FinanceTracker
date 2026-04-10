@@ -1,5 +1,6 @@
 package com.example.financetracker.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ public class AppUser {
 
     private String email;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "appUser", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Transaction> transactions;
 

@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/transactions")
@@ -28,6 +29,18 @@ public class TransactionController {
         transactionService.addTransaction(userId, categoryId, amount, description);
         return ResponseEntity.ok("Transaction saved!");
     }
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<List<Transaction>> getUserTransactions(@PathVariable("userId") Long userId){
+        // call the service layer to bring the list of transactions
+        List<Transaction> transactions = transactionService.getUserTransactions(userId);
+
+        return ResponseEntity.ok(transactions);
+    }
+
+    // @PutMapping
+
+
 
 
 }
