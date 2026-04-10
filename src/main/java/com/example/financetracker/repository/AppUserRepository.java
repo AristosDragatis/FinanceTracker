@@ -16,4 +16,7 @@ public interface AppUserRepository extends JpaRepository<AppUser, Long> {
     // check if the email already exists.
     boolean existsByEmail(String email);
 
+    // check if a user exists with the same name
+    boolean existsByName(String name);
+
 }

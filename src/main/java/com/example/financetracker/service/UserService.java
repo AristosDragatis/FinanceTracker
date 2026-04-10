@@ -21,6 +21,11 @@ public class UserService {
             throw new RuntimeException("Email: " + email + " already exists!");
         }
 
+        // check if name already exists
+        if(appUserRepository.existsByName(name)){
+            throw new RuntimeException("Name: " + name + " already exists!");
+        }
+
         String encodedPassword = passwordEncoder.encode(rawPassword);
 
         AppUser newUser= new AppUser();
