@@ -1,7 +1,6 @@
 package com.example.financetracker.dto;
 
 
-import com.example.financetracker.service.UserService;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
