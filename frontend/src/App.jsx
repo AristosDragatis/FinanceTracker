@@ -1,121 +1,80 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import React, { useState } from 'react';
+import Login from './Login';
+import Transactions from './Transactions';
+import Register from './Register';
 
 function App() {
-  const [count, setCount] = useState(0)
+    // Ελέγχουμε αν ο χρήστης είναι ήδη συνδεδεμένος (αν υπάρχει token)
+    const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
 
-  return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    // State για να ξέρουμε αν θα δείξουμε τη φόρμα Login ή Register
+    const [showRegister, setShowRegister] = useState(false);
 
-      <div className="ticks"></div>
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        setIsLoggedIn(false);
+    };
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+    // Αν ο χρήστης είναι συνδεδεμένος, δείχνουμε το Dashboard (Transactions)
+    if (isLoggedIn) {
+        return (
+            <div style={{ fontFamily: 'Arial, sans-serif' }}>
+                <nav style={styles.nav}>
+                    <strong>Finance Tracker</strong>
+                    <button onClick={handleLogout} style={styles.logoutBtn}>Logout</button>
+                </nav>
+                <div style={{ marginTop: '20px' }}>
+                    <Transactions />
+                </div>
+            </div>
+        );
+    }
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+    // Αν ΔΕΝ είναι συνδεδεμένος, δείχνουμε είτε το Login είτε το Register
+    return (
+        <div style={{ fontFamily: 'Arial, sans-serif' }}>
+            <nav style={styles.nav}>
+                <strong>Finance Tracker</strong>
+            </nav>
+
+            <div style={{ textAlign: 'center', marginTop: '50px' }}>
+                {showRegister ? (
+                    // Δείξε τη φόρμα Εγγραφής
+                    <Register
+                        onRegisterSuccess={() => setShowRegister(false)}
+                        onSwitchToLogin={() => setShowRegister(false)}
+                    />
+                ) : (
+                    // Δείξε τη φόρμα Σύνδεσης
+                    <Login
+                        onLogin={() => setIsLoggedIn(true)}
+                        onSwitchToRegister={() => setShowRegister(true)}
+                    />
+                )}
+            </div>
+        </div>
+    );
 }
 
-export default App
+// Μερικά βασικά styles για το Nav
+const styles = {
+    nav: {
+        padding: '10px 20px',
+        background: '#333',
+        color: 'white',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+    },
+    logoutBtn: {
+        color: 'white',
+        background: '#dc3545',
+        border: 'none',
+        padding: '8px 15px',
+        borderRadius: '4px',
+        cursor: 'pointer',
+        fontWeight: 'bold'
+    }
+};
+
+export default App;
