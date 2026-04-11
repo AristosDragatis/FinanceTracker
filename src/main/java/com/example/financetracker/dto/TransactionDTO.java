@@ -12,12 +12,8 @@ public class TransactionDTO {
     // empty constructor
     public TransactionDTO(){}
 
-    @NotNull(message = "User ID must not be empty.")
-    private Long userId;
-
-
     @NotNull(message = "Choose a category.")
-    private Long categoryId;
+    private String categoryName;
 
     @NotNull(message = "Amount must not be empty.")
     @Positive(message = "Amount cannot be less than 0.")
@@ -26,20 +22,13 @@ public class TransactionDTO {
     @Size(max = 255, message = "Description max characters exceeded (Total = 255)!")
     private String description;
 
-    public Long getUserId() {
-        return userId;
+
+    public String getCategoryName() {
+        return categoryName;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    public Long getCategoryId() {
-        return categoryId;
-    }
-
-    public void setCategoryId(Long categoryId) {
-        this.categoryId = categoryId;
+    public void setCategoryId(String categoryName) {
+        this.categoryName= categoryName;
     }
 
     public BigDecimal getAmount() {

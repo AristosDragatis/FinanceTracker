@@ -23,19 +23,18 @@ public class TransactionController {
     // Add a transaction
     @PostMapping("/save_transaction")
     public ResponseEntity<String> saveTransaction(@Valid @RequestBody TransactionDTO request){
-        transactionService.addTransaction(request.getUserId(), request.getCategoryId(), request.getAmount(), request.getDescription());
+        transactionService.addTransaction(request.getCategoryName(), request.getAmount(), request.getDescription());
         return ResponseEntity.ok("Transaction saved!");
     }
 
     // get all the transactions based on user ID
-    @GetMapping("/{userId}")
+    @GetMapping("/my_transactions")
     public ResponseEntity<List<Transaction>> getUserTransactions(
-            @PathVariable Long userId,
-            @RequestParam("filterType")FilterType filterType,
-            @RequestParam("filterValue") String filterValue
+            @RequestParam(required = false)FilterType filterType,
+            @RequestParam(required = false) String filterValue
     ){
         // call the service layer to bring the list of transactions
-        List<Transaction> transactions = transactionService.getUserTransactions(userId, filterType, filterValue);
+        List<Transaction> transactions = transactionService.getUserTransactions(filterType, filterValue);
 
         return ResponseEntity.ok(transactions);
     }
@@ -46,7 +45,7 @@ public class TransactionController {
             @PathVariable Long transactionId,
             @Valid @RequestBody TransactionDTO request){
         // call the service layer to update the transaction
-        transactionService.updateTransaction(transactionId, request.getUserId(),request.getAmount(),request.getCategoryId(), request.getDescription());
+        transactionService.updateTransaction(transactionId, request.getAmount(),request.getCategoryName(), request.getDescription());
 
         return ResponseEntity.ok("Transaction updated successfully!");
     }

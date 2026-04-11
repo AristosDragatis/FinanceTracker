@@ -10,6 +10,7 @@ import com.example.financetracker.repository.TransactionRepository;
 import com.example.financetracker.service.strategy.TransactionFilterFactory;
 import com.example.financetracker.service.strategy.TransactionFilterStrategy;
 import jakarta.transaction.Transactional;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -36,32 +37,39 @@ public class TransactionService {
 
     // add a transaction
     @Transactional
-    public Transaction addTransaction(Long userId, Long categoryId, BigDecimal amount, String description){
+    public Transaction addTransaction(String categoryName, BigDecimal amount, String description){
 
-        // check if user exists.
-        AppUser user = appUserRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User with ID: " + userId + " not found!"));
+        // find the username from database
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        AppUser user = appUserRepository.findByName(currentUsername)
+                .orElseThrow(() -> new RuntimeException("User not found!"));
 
         // search the category
-        Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new RuntimeException("Category with ID: " + categoryId + " not found!"));
+        Category category = categoryRepository.findByNameIgnoreCase(categoryName)
+                .orElseThrow(() -> new RuntimeException("Category with ID: " + categoryName + " not found!"));
 
         // create transaction object
         Transaction transaction = new Transaction();
         transaction.setAmount(amount);
         transaction.setDescription(description);
         transaction.setDate(LocalDateTime.now());
-        transaction.setUser(user);
         transaction.setCategory(category);
+        transaction.setUser(user);
 
         // save into database
         return transactionRepository.save(transaction);
     }
 
     // User can see all their transactions
-    public List<Transaction> getUserTransactions(Long userId, FilterType filterType, String filterValue){
+    public List<Transaction> getUserTransactions(FilterType filterType, String filterValue){
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        AppUser user = appUserRepository.findByName(currentUsername)
+                .orElseThrow(() -> new RuntimeException("User not found!"));
+
         // fetch all the transactions base on userId
-        List<Transaction> transactions = transactionRepository.findByAppUserId(userId);
+        List<Transaction> transactions = transactionRepository.findByAppUserId(user.getId());
        if(filterType == null || filterValue == null){
            return transactions;
        }
@@ -88,16 +96,13 @@ public class TransactionService {
 
     // update a transaction
     @Transactional
-    public void updateTransaction(Long transactionId, Long userId, BigDecimal amount, Long categoryId, String description){
+    public void updateTransaction(Long transactionId, BigDecimal amount, String categoryName, String description){
         Transaction transaction = transactionRepository.findById(transactionId)
                 .orElseThrow(() -> new RuntimeException("Transaction not found!"));
 
 
-        if(!transaction.getUser().getId().equals(userId)){
-            throw new RuntimeException("No permissions to update this transaction!");
-        }
 
-        Category category = categoryRepository.findById(categoryId)
+        Category category = categoryRepository.findByNameIgnoreCase(categoryName)
                         .orElseThrow(() -> new RuntimeException("Category not found!"));
 
         transaction.setAmount(amount);
