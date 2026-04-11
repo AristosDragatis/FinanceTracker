@@ -1,0 +1,114 @@
+package com.example.financetracker.service;
+
+import com.example.financetracker.domain.AppUser;
+import com.example.financetracker.domain.Category;
+import com.example.financetracker.domain.FilterType;
+import com.example.financetracker.domain.Transaction;
+import com.example.financetracker.repository.AppUserRepository;
+import com.example.financetracker.repository.CategoryRepository;
+import com.example.financetracker.repository.TransactionRepository;
+import com.example.financetracker.service.strategy.TransactionFilterFactory;
+import com.example.financetracker.service.strategy.TransactionFilterStrategy;
+import jakarta.transaction.Transactional;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Service
+public class TransactionService {
+    private final TransactionRepository transactionRepository;
+    private final CategoryRepository categoryRepository;
+    private final AppUserRepository appUserRepository;
+    private final TransactionFilterFactory transactionFilterFactory;
+
+    // constructor injection
+    public TransactionService(TransactionRepository transactionRepository,
+                              CategoryRepository categoryRepository,
+                              AppUserRepository appUserRepository,
+                              TransactionFilterFactory transactionFilterFactory){
+        this.appUserRepository = appUserRepository;
+        this.categoryRepository = categoryRepository;
+        this.transactionRepository = transactionRepository;
+        this.transactionFilterFactory = transactionFilterFactory;
+    }
+
+    // add a transaction
+    @Transactional
+    public Transaction addTransaction(String categoryName, BigDecimal amount, String description){
+
+        // find the username from database
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        AppUser user = appUserRepository.findByName(currentUsername)
+                .orElseThrow(() -> new RuntimeException("User not found!"));
+
+        // search the category
+        Category category = categoryRepository.findByNameIgnoreCase(categoryName)
+                .orElseThrow(() -> new RuntimeException("Category with ID: " + categoryName + " not found!"));
+
+        // create transaction object
+        Transaction transaction = new Transaction();
+        transaction.setAmount(amount);
+        transaction.setDescription(description);
+        transaction.setDate(LocalDateTime.now());
+        transaction.setCategory(category);
+        transaction.setUser(user);
+
+        // save into database
+        return transactionRepository.save(transaction);
+    }
+
+    // User can see all their transactions
+    public List<Transaction> getUserTransactions(FilterType filterType, String filterValue){
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        AppUser user = appUserRepository.findByName(currentUsername)
+                .orElseThrow(() -> new RuntimeException("User not found!"));
+
+        // fetch all the transactions base on userId
+        List<Transaction> transactions = transactionRepository.findByAppUserId(user.getId());
+       if(filterType == null || filterValue == null){
+           return transactions;
+       }
+       else{
+           TransactionFilterStrategy strategy = transactionFilterFactory.getStrategy(filterType);
+           return strategy.filter(transactions, filterValue);
+       }
+    }
+
+
+    // delete a transaction
+    @Transactional
+    public void deleteTransaction(Long transactionId, Long userId){
+        Transaction transaction = transactionRepository.findById(transactionId)
+                .orElseThrow(() -> new RuntimeException("Transaction not found!"));
+
+        if(!transaction.getUser().getId().equals(userId)){
+            throw new RuntimeException("No permissions to delete this transaction!");
+        }
+
+        transactionRepository.delete(transaction);
+    }
+
+
+    // update a transaction
+    @Transactional
+    public void updateTransaction(Long transactionId, BigDecimal amount, String categoryName, String description){
+        Transaction transaction = transactionRepository.findById(transactionId)
+                .orElseThrow(() -> new RuntimeException("Transaction not found!"));
+
+
+
+        Category category = categoryRepository.findByNameIgnoreCase(categoryName)
+                        .orElseThrow(() -> new RuntimeException("Category not found!"));
+
+        transaction.setAmount(amount);
+        transaction.setCategory(category);
+        transaction.setDescription(description);
+
+        transactionRepository.save(transaction);
+    }
+}
