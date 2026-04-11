@@ -1,5 +1,6 @@
 package com.example.financetracker.controller;
 
+import com.example.financetracker.domain.FilterType;
 import com.example.financetracker.domain.Transaction;
 import com.example.financetracker.dto.TransactionDTO;
 import com.example.financetracker.service.TransactionService;
@@ -28,9 +29,13 @@ public class TransactionController {
 
     // get all the transactions based on user ID
     @GetMapping("/{userId}")
-    public ResponseEntity<List<Transaction>> getUserTransactions(@PathVariable Long userId){
+    public ResponseEntity<List<Transaction>> getUserTransactions(
+            @PathVariable Long userId,
+            @RequestParam("filterType")FilterType filterType,
+            @RequestParam("filterValue") String filterValue
+    ){
         // call the service layer to bring the list of transactions
-        List<Transaction> transactions = transactionService.getUserTransactions(userId);
+        List<Transaction> transactions = transactionService.getUserTransactions(userId, filterType, filterValue);
 
         return ResponseEntity.ok(transactions);
     }

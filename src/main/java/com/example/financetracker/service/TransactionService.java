@@ -2,10 +2,13 @@ package com.example.financetracker.service;
 
 import com.example.financetracker.domain.AppUser;
 import com.example.financetracker.domain.Category;
+import com.example.financetracker.domain.FilterType;
 import com.example.financetracker.domain.Transaction;
 import com.example.financetracker.repository.AppUserRepository;
 import com.example.financetracker.repository.CategoryRepository;
 import com.example.financetracker.repository.TransactionRepository;
+import com.example.financetracker.service.strategy.TransactionFilterFactory;
+import com.example.financetracker.service.strategy.TransactionFilterStrategy;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -18,14 +21,17 @@ public class TransactionService {
     private final TransactionRepository transactionRepository;
     private final CategoryRepository categoryRepository;
     private final AppUserRepository appUserRepository;
+    private final TransactionFilterFactory transactionFilterFactory;
 
     // constructor injection
     public TransactionService(TransactionRepository transactionRepository,
                               CategoryRepository categoryRepository,
-                              AppUserRepository appUserRepository){
+                              AppUserRepository appUserRepository,
+                              TransactionFilterFactory transactionFilterFactory){
         this.appUserRepository = appUserRepository;
         this.categoryRepository = categoryRepository;
         this.transactionRepository = transactionRepository;
+        this.transactionFilterFactory = transactionFilterFactory;
     }
 
     // add a transaction
@@ -53,8 +59,16 @@ public class TransactionService {
     }
 
     // User can see all their transactions
-    public List<Transaction> getUserTransactions(Long userId){
-        return transactionRepository.findByAppUserId(userId);
+    public List<Transaction> getUserTransactions(Long userId, FilterType filterType, String filterValue){
+        // fetch all the transactions base on userId
+        List<Transaction> transactions = transactionRepository.findByAppUserId(userId);
+       if(filterType == null || filterValue == null){
+           return transactions;
+       }
+       else{
+           TransactionFilterStrategy strategy = transactionFilterFactory.getStrategy(filterType);
+           return strategy.filter(transactions, filterValue);
+       }
     }
 
 
