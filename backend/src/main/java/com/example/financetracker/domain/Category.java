@@ -13,7 +13,8 @@ public class Category {
 
     private String name;
 
-    private String type;
+    @Enumerated(EnumType.STRING)
+    private CategoryType type;
 
     @JsonIgnore
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
@@ -35,19 +36,19 @@ public class Category {
         this.name = name;
     }
 
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
     public List<Transaction> getTransactions() {
         return transactions;
     }
 
     public void setTransactions(List<Transaction> transactions) {
         this.transactions = transactions;
+    }
+
+    public void setType(CategoryType type) {
+        this.type = type;
+    }
+
+    public CategoryType getType() {
+        return type;
     }
 }

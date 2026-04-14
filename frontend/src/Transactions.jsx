@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import AddTransaction from './AddTransaction'; // 1. Το νέο μας Component!
+import AddTransaction from './AddTransaction'; 
 
-function Transactions() {
+
+
+function Transactions({onBack}) {
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -28,6 +30,14 @@ function Transactions() {
 
   return (
     <div style={{ padding: '20px', maxWidth: '800px', margin: 'auto' }}>
+      
+      <button 
+        onClick={onBack} 
+        style={{ marginBottom: '20px', padding: '8px 12px', cursor: 'pointer', backgroundColor: '#eee', border: '1px solid #ccc', borderRadius: '4px' }}
+      >
+        Επιστροφή στο Μενού
+      </button>
+
       <h2>Οι Συναλλαγές μου</h2>
       
       <AddTransaction onTransactionAdded={fetchTransactions} />
@@ -36,20 +46,32 @@ function Transactions() {
         <thead>
           <tr style={{ backgroundColor: '#f2f2f2' }}>
             <th style={{ padding: '10px' }}>Ποσό</th>
+            <th style={{ padding: '10px' }}>Κατηγορία (Τύπος Κατηγορίας)</th>
             <th style={{ padding: '10px' }}>Περιγραφή</th>
-            <th style={{ padding: '10px' }}>Κατηγορία</th>
             <th style={{ padding: '10px' }}>Ημερομηνία</th>
           </tr>
         </thead>
         <tbody>
-          {transactions.map(t => (
-            <tr key={t.id}>
-              <td style={{ padding: '10px' }}>{t.amount}€</td>
-              <td style={{ padding: '10px' }}>{t.description}</td>
-              <td style={{ padding: '10px' }}>{t.category ? t.category.name : 'Χωρίς κατηγορία'}</td>
-              <td style={{ padding: '10px' }}>{new Date(t.date).toLocaleDateString('el-GR')}</td>
-            </tr>
-          ))}
+          {transactions.map(t => {
+            const isExpense = t.category && t.category.type === 'EXPENSE';
+
+            return (
+              <tr key={t.id} style={{ borderBottom: '1px solid #444' }}>
+                
+                <td style={{ 
+                  padding: '10px', 
+                  color: isExpense ? '#ff4d4d' : '#28a745', 
+                  fontWeight: 'bold'
+                }}>
+                  {isExpense ? '-' : '+'} {t.amount}€
+                </td>
+
+                <td style={{ padding: '10px' }}>{t.category ? t.category.name : 'Χωρίς κατηγορία'} ({t.category.type})</td>
+                <td style={{ padding: '10px' }}>{t.description}</td>
+                <td style={{ padding: '10px' }}>{new Date(t.date).toLocaleDateString('el-GR')}</td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>

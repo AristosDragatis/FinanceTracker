@@ -3,8 +3,7 @@ TRUNCATE TABLE category CASCADE;
 
 -- Incomes
 INSERT INTO category (name, type) VALUES ('Salary', 'INCOME');
-INSERT INTO category (name, type) VALUES ('Gift', 'INCOME');
-INSERT INTO category (name, type) VALUES ('Investment', 'INCOME');
+INSERT INTO category (name, type) VALUES ('Transfer', 'TRANSFER');
 
 -- Expenses
 INSERT INTO category (name, type) VALUES ('Supermarket', 'EXPENSE');

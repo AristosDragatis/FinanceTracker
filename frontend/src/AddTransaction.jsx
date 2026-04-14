@@ -76,14 +76,14 @@ function AddTransaction({ onTransactionAdded }) {
           <option value="" disabled>Επιλέξτε Κατηγορία</option>
           {categories.map((cat) => (
             <option key={cat.id} value={cat.name}>
-              {cat.name}
+              {cat.name} ({cat.type})
             </option>
           ))}
         </select>
 
         <input
           type="number"
-          step="0.01"
+          step="5.00"
           name="amount"
           placeholder="Ποσό (€)"
           value={formData.amount}
@@ -94,10 +94,9 @@ function AddTransaction({ onTransactionAdded }) {
         
         <input
           name="description"
-          placeholder="Περιγραφή"
+          placeholder="Περιγραφή (Προεραιτική)"
           value={formData.description}
           onChange={handleChange}
-          required
           style={styles.input}
         />
         

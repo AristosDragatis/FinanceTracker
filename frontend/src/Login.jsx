@@ -33,7 +33,7 @@ function Login({ onLogin, onSwitchToRegister }) {
     return (
         <div style={styles.container}>
             <div style={styles.card}>
-                <h2>Είσοδος</h2>
+                <h2 style={styles.text}>Είσοδος</h2>
                 <form onSubmit={handleSubmit}>
                     <div style={styles.inputGroup}>
                         <label>Όνομα Χρήστη:</label>
@@ -126,6 +126,9 @@ const styles = {
         color: '#dc3545',
         fontSize: '0.85rem',
         marginBottom: '1rem'
+    },
+    text:{
+        color: 'black'
     }
 };
 

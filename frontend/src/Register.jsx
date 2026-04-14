@@ -23,7 +23,7 @@ function Register({ onRegisterSuccess, onSwitchToLogin }) {
     try {
       await axios.post('http://localhost:8080/api/auth/register', formData);
       
-      setMessage('Η εγγραφή πέτυχε! Γίνεται ανακατεύθυνση...');
+      setMessage('Επιτυχής εγγραφή! Γίνεται ανακατεύθυνση...');
       
       setTimeout(() => {
         if (onRegisterSuccess) onRegisterSuccess();
@@ -42,7 +42,7 @@ function Register({ onRegisterSuccess, onSwitchToLogin }) {
   return (
     <div style={styles.container}>
       <div style={styles.card}>
-        <h2>Δημιουργία Λογαριασμού</h2>
+        <h2 style={styles.text}>Δημιουργία Λογαριασμού</h2>
         <form onSubmit={handleSubmit}>
           
           <div style={styles.inputGroup}>
@@ -108,7 +108,9 @@ const styles = {
   input: { width: '100%', padding: '10px', marginTop: '5px', borderRadius: '6px', border: '1px solid #ddd', boxSizing: 'border-box' },
   button: { width: '100%', padding: '12px', backgroundColor: '#28a745', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '1rem', fontWeight: 'bold' },
   linkButton: { background: 'none', border: 'none', color: '#007bff', cursor: 'pointer', fontSize: '0.95rem', textDecoration: 'underline', padding: '5px' },
-  message: { marginTop: '15px', fontWeight: 'bold', fontSize: '0.9rem' }
+  message: { marginTop: '15px', fontWeight: 'bold', fontSize: '0.9rem' },
+  text: {color: 'black'}
+
 };
 
 export default Register;

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Login from './Login';
 import Transactions from './Transactions';
 import Register from './Register';
+import MainMenu from './MainMenu';
 
 function App() {
     // check if the user is logged in (if there is a token)
@@ -9,6 +10,7 @@ function App() {
 
     // State to show register or login
     const [showRegister, setShowRegister] = useState(false);
+    const [currentView, setCurrentView] = useState('menu');
 
     const handleLogout = () => {
         localStorage.removeItem('token');
@@ -24,7 +26,13 @@ function App() {
                     <button onClick={handleLogout} style={styles.logoutBtn}>Logout</button>
                 </nav>
                 <div style={{ marginTop: '20px' }}>
-                    <Transactions />
+                    {currentView === 'menu' && (
+                        <MainMenu onNavigate={(view) => setCurrentView(view)} />
+                    )}
+                    
+                    {currentView === 'transactions' && (
+                        <Transactions onBack={() => setCurrentView('menu')} />
+                    )}
                 </div>
             </div>
         );
@@ -56,7 +64,6 @@ function App() {
     );
 }
 
-// Μερικά βασικά styles για το Nav
 const styles = {
     nav: {
         padding: '10px 20px',
