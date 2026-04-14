@@ -3,8 +3,7 @@ import React from 'react';
 function MainMenu({ onNavigate }) {
   return (
     <div style={styles.container}>
-      <h2>Καλωσήρθες στο Finance Tracker!</h2>
-      <p style={{ color: '#666', marginBottom: '30px' }}>Τι θα ήθελες να κάνεις σήμερα;</p>
+      <h2 style={{marginBottom: '30px'}}>Καλωσήρθες στο Finance Tracker!</h2>
       
       <div style={styles.grid}>
         <button 
