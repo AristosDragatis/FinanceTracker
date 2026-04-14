@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-// Προσθέσαμε το onSwitchToRegister στα props
 function Login({ onLogin, onSwitchToRegister }) {
     const [credentials, setCredentials] = useState({
         name: '',

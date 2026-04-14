@@ -4,10 +4,10 @@ import Transactions from './Transactions';
 import Register from './Register';
 
 function App() {
-    // Ελέγχουμε αν ο χρήστης είναι ήδη συνδεδεμένος (αν υπάρχει token)
+    // check if the user is logged in (if there is a token)
     const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
 
-    // State για να ξέρουμε αν θα δείξουμε τη φόρμα Login ή Register
+    // State to show register or login
     const [showRegister, setShowRegister] = useState(false);
 
     const handleLogout = () => {
@@ -15,7 +15,7 @@ function App() {
         setIsLoggedIn(false);
     };
 
-    // Αν ο χρήστης είναι συνδεδεμένος, δείχνουμε το Dashboard (Transactions)
+    // If the user is logged in show the Dashboard 
     if (isLoggedIn) {
         return (
             <div style={{ fontFamily: 'Arial, sans-serif' }}>
@@ -30,7 +30,7 @@ function App() {
         );
     }
 
-    // Αν ΔΕΝ είναι συνδεδεμένος, δείχνουμε είτε το Login είτε το Register
+    // if the user is not logged in (show register or login page)
     return (
         <div style={{ fontFamily: 'Arial, sans-serif' }}>
             <nav style={styles.nav}>
@@ -39,13 +39,13 @@ function App() {
 
             <div style={{ textAlign: 'center', marginTop: '50px' }}>
                 {showRegister ? (
-                    // Δείξε τη φόρμα Εγγραφής
+                    // Register page
                     <Register
                         onRegisterSuccess={() => setShowRegister(false)}
                         onSwitchToLogin={() => setShowRegister(false)}
                     />
                 ) : (
-                    // Δείξε τη φόρμα Σύνδεσης
+                    // Login page
                     <Login
                         onLogin={() => setIsLoggedIn(true)}
                         onSwitchToRegister={() => setShowRegister(true)}
