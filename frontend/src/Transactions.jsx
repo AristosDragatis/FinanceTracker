@@ -33,7 +33,7 @@ function Transactions({onBack}) {
       
       <button 
         onClick={onBack} 
-        style={{ marginBottom: '20px', padding: '8px 12px', cursor: 'pointer', backgroundColor: '#eee', border: '1px solid #ccc', borderRadius: '4px' }}
+        style={{ marginBottom: '20px', padding: '8px 12px', cursor: 'pointer', backgroundColor: '#eee', border: '1px solid #ccc', borderRadius: '4px', color:'#333' }}
       >
         Επιστροφή στο Μενού
       </button>

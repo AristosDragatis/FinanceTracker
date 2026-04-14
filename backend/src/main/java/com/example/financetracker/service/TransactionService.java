@@ -82,11 +82,15 @@ public class TransactionService {
 
     // delete a transaction
     @Transactional
-    public void deleteTransaction(Long transactionId, Long userId){
+    public void deleteTransaction(Long transactionId){
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+        AppUser user = appUserRepository.findByName(currentUsername)
+                .orElseThrow(() -> new RuntimeException("User not found!"));
+
         Transaction transaction = transactionRepository.findById(transactionId)
                 .orElseThrow(() -> new RuntimeException("Transaction not found!"));
 
-        if(!transaction.getUser().getId().equals(userId)){
+        if(!transaction.getUser().getId().equals(user.getId())){
             throw new RuntimeException("No permissions to delete this transaction!");
         }
 
@@ -97,9 +101,17 @@ public class TransactionService {
     // update a transaction
     @Transactional
     public void updateTransaction(Long transactionId, BigDecimal amount, String categoryName, String description){
+
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+        AppUser user = appUserRepository.findByName(currentUsername)
+                .orElseThrow(() -> new RuntimeException("User not found!"));
+
         Transaction transaction = transactionRepository.findById(transactionId)
                 .orElseThrow(() -> new RuntimeException("Transaction not found!"));
 
+        if(!transaction.getUser().getId().equals(user.getId())){
+            throw new RuntimeException("No permissions to update this transaction!");
+        }
 
 
         Category category = categoryRepository.findByNameIgnoreCase(categoryName)

@@ -52,8 +52,8 @@ public class TransactionController {
 
     // delete a transaction
     @DeleteMapping("/{transactionId}")
-    public ResponseEntity<String> deleteTransaction(@PathVariable Long transactionId, @RequestParam("userId") Long userId){
-        transactionService.deleteTransaction(transactionId, userId);
+    public ResponseEntity<String> deleteTransaction(@PathVariable Long transactionId){
+        transactionService.deleteTransaction(transactionId);
 
         return ResponseEntity.ok("Transaction deleted successfully!");
     }

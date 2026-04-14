@@ -1,22 +1,22 @@
 --  (AppUser)
 CREATE TABLE IF NOT EXISTS app_user (
-                                        id BIGSERIAL PRIMARY KEY,
-                                        name VARCHAR(255) NOT NULL UNIQUE,
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL UNIQUE,
     email VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL
     );
 
 --  (Category)
 CREATE TABLE IF NOT EXISTS category (
-                                        id BIGSERIAL PRIMARY KEY,
-                                        name VARCHAR(255) NOT NULL,
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
     type VARCHAR(50) NOT NULL
     );
 
 --  (Transaction)
 CREATE TABLE IF NOT EXISTS transaction (
-                                           id BIGSERIAL PRIMARY KEY,
-                                           amount NUMERIC(19, 2) NOT NULL,
+    id BIGSERIAL PRIMARY KEY,
+    amount NUMERIC(19, 2) NOT NULL,
     description VARCHAR(255) NOT NULL,
     transaction_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     user_id BIGINT NOT NULL,
