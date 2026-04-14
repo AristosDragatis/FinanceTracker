@@ -22,6 +22,29 @@ function Transactions({onBack}) {
     }
   };
 
+  // handle delete 
+  const handleDelete = async (id) => {
+    // await confirmation from the user 
+    const isConfirmed = window.confirm("Είστε σίγουροι ότι θέλετε να διαγράψετε αυτή τη συναλλαγή;");
+    if(!isConfirmed) return;
+
+    try{
+      const token = localStorage.getItem('token');
+      // send the delete request to backend 
+      await axios.delete(`http://localhost:8080/api/transactions/${id}`, 
+        {headers: {Authorization: `Bearer ${token}`}});
+
+      // erase the line from State
+      setTransactions(transactions.filter(t => t.id !== id));
+
+    } catch (error) {
+      console.error("Σφάλμα κατά τη διαγραφή: ", error);
+      alert("Κάτι πήγε στραβά κατά τη διαγραφή!");
+    }
+
+  };
+
+
   useEffect(() => {
     fetchTransactions();
   }, []);
@@ -49,6 +72,7 @@ function Transactions({onBack}) {
             <th style={{ padding: '10px' }}>Κατηγορία (Τύπος Κατηγορίας)</th>
             <th style={{ padding: '10px' }}>Περιγραφή</th>
             <th style={{ padding: '10px' }}>Ημερομηνία</th>
+            <th style={{ padding: '10px'}}>Ενέργειες</th>
           </tr>
         </thead>
         <tbody>
@@ -69,6 +93,19 @@ function Transactions({onBack}) {
                 <td style={{ padding: '10px' }}>{t.category ? t.category.name : 'Χωρίς κατηγορία'} ({t.category.type})</td>
                 <td style={{ padding: '10px' }}>{t.description}</td>
                 <td style={{ padding: '10px' }}>{new Date(t.date).toLocaleDateString('el-GR')}</td>
+                <td style={{ padding: '10px'}}>
+                  <button
+                    onClick={() => handleDelete(t.id)}                  
+                    style={{
+                      padding: '5px 10px',
+                      backgroundColor: '#dc3545',
+                      color: 'white',
+                      border: 'none', 
+                      borderRadius: '4px',
+                      cursor: 'pointer'
+                    }}
+                  >Διαγραφή</button>
+                </td>
               </tr>
             );
           })}
