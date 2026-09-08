@@ -1,6 +1,8 @@
 package com.example.financetracker.service;
 
 import com.example.financetracker.domain.AppUser;
+import com.example.financetracker.exception.DuplicateResourceException;
+import com.example.financetracker.exception.UnauthorizedException;
 import com.example.financetracker.repository.AppUserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,12 +21,12 @@ public class UserServiceImpl implements UserService {
     public AppUser registerUser(String name, String email, String rawPassword){
         // check if email already exists
         if(appUserRepository.existsByEmail(email)){
-            throw new RuntimeException("Email: " + email + " already exists!");
+            throw new DuplicateResourceException("Email '" + email + "' already exists!");
         }
 
         // check if name already exists
         if(appUserRepository.existsByName(name)){
-            throw new RuntimeException("Name: " + name + " already exists!");
+            throw new DuplicateResourceException("Name '" + name + "' already exists!");
         }
 
         String encodedPassword = passwordEncoder.encode(rawPassword);
@@ -43,10 +45,10 @@ public class UserServiceImpl implements UserService {
     public AppUser loginUser(String name, String rawPassword){
         // find user by name
         AppUser user = appUserRepository.findByName(name)
-                .orElseThrow(() -> new RuntimeException("Wrong username or password"));
+                .orElseThrow(() -> new UnauthorizedException("Invalid username or password"));
 
         if(!passwordEncoder.matches(rawPassword, user.getPassword())){
-            throw new RuntimeException("Incorrect password!");
+            throw new UnauthorizedException("Invalid username or password");
         }
         return user;
     }

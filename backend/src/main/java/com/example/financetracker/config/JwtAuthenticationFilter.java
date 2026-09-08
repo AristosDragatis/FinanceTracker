@@ -3,6 +3,7 @@ package com.example.financetracker.config;
 import com.example.financetracker.domain.AppUser;
 import com.example.financetracker.repository.AppUserRepository;
 import com.example.financetracker.service.JwtService;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -51,8 +52,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // keep the clean token without "Bearer "
         jwt = authHeader.substring(7);
 
-        // read the name of the user from the token
-        username = jwtService.extractUsername(jwt);
+        // read the name of the user from the token; an expired or tampered token
+        // must not blow up as a 500 - just continue unauthenticated so Spring returns 401
+        try {
+            username = jwtService.extractUsername(jwt);
+        } catch (JwtException | IllegalArgumentException e) {
+            logger.debug("Rejected JWT: " + e.getMessage());
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 

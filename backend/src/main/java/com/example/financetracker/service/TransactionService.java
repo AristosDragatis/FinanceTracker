@@ -4,6 +4,8 @@ import com.example.financetracker.domain.AppUser;
 import com.example.financetracker.domain.Category;
 import com.example.financetracker.domain.FilterType;
 import com.example.financetracker.domain.Transaction;
+import com.example.financetracker.exception.ForbiddenException;
+import com.example.financetracker.exception.NotFoundException;
 import com.example.financetracker.repository.AppUserRepository;
 import com.example.financetracker.repository.CategoryRepository;
 import com.example.financetracker.repository.TransactionRepository;
@@ -43,11 +45,11 @@ public class TransactionService {
         String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
 
         AppUser user = appUserRepository.findByName(currentUsername)
-                .orElseThrow(() -> new RuntimeException("User not found!"));
+                .orElseThrow(() -> new NotFoundException("User not found!"));
 
         // search the category
         Category category = categoryRepository.findByNameIgnoreCase(categoryName)
-                .orElseThrow(() -> new RuntimeException("Category with ID: " + categoryName + " not found!"));
+                .orElseThrow(() -> new NotFoundException("Category '" + categoryName + "' not found!"));
 
         // create transaction object
         Transaction transaction = new Transaction();
@@ -66,7 +68,7 @@ public class TransactionService {
         String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
 
         AppUser user = appUserRepository.findByName(currentUsername)
-                .orElseThrow(() -> new RuntimeException("User not found!"));
+                .orElseThrow(() -> new NotFoundException("User not found!"));
 
         // fetch all the transactions base on userId
         List<Transaction> transactions = transactionRepository.findByAppUserId(user.getId());
@@ -85,13 +87,13 @@ public class TransactionService {
     public void deleteTransaction(Long transactionId){
         String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
         AppUser user = appUserRepository.findByName(currentUsername)
-                .orElseThrow(() -> new RuntimeException("User not found!"));
+                .orElseThrow(() -> new NotFoundException("User not found!"));
 
         Transaction transaction = transactionRepository.findById(transactionId)
-                .orElseThrow(() -> new RuntimeException("Transaction not found!"));
+                .orElseThrow(() -> new NotFoundException("Transaction not found!"));
 
         if(!transaction.getUser().getId().equals(user.getId())){
-            throw new RuntimeException("No permissions to delete this transaction!");
+            throw new ForbiddenException("No permission to delete this transaction!");
         }
 
         transactionRepository.delete(transaction);
@@ -104,18 +106,18 @@ public class TransactionService {
 
         String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
         AppUser user = appUserRepository.findByName(currentUsername)
-                .orElseThrow(() -> new RuntimeException("User not found!"));
+                .orElseThrow(() -> new NotFoundException("User not found!"));
 
         Transaction transaction = transactionRepository.findById(transactionId)
-                .orElseThrow(() -> new RuntimeException("Transaction not found!"));
+                .orElseThrow(() -> new NotFoundException("Transaction not found!"));
 
         if(!transaction.getUser().getId().equals(user.getId())){
-            throw new RuntimeException("No permissions to update this transaction!");
+            throw new ForbiddenException("No permission to update this transaction!");
         }
 
 
         Category category = categoryRepository.findByNameIgnoreCase(categoryName)
-                        .orElseThrow(() -> new RuntimeException("Category not found!"));
+                        .orElseThrow(() -> new NotFoundException("Category not found!"));
 
         transaction.setAmount(amount);
         transaction.setCategory(category);
