@@ -1,0 +1,39 @@
+# ---- IDE ----
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+.settings/
+.project
+.classpath
+
+# ---- OS ----
+.DS_Store
+Thumbs.db
+
+# ---- Java / Maven ----
+target/
+!.mvn/wrapper/maven-wrapper.jar
+
+# ---- JVM crash logs ----
+hs_err_pid*.log
+replay_pid*.log
+*.hprof
+
+# ---- Logs ----
+*.log
+logs/
+
+# ---- Node / frontend ----
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+# ---- Secrets / local config ----
+.env
+.env.*
+!.env.example
+application-local.properties
+application-local.yml
