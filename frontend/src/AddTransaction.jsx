@@ -30,7 +30,12 @@ function AddTransaction({ onTransactionAdded }) {
   }, []);
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+
+    // Δεν επιτρέπονται αρνητικές τιμές στο ποσό
+    if (name === 'amount' && value !== '' && Number(value) < 0) return;
+
+    setFormData({ ...formData, [name]: value });
   };
 
   const handleSubmit = async (e) => {
@@ -38,6 +43,11 @@ function AddTransaction({ onTransactionAdded }) {
     
     if (!formData.categoryName) {
       alert("Παρακαλώ επιλέξτε κατηγορία!");
+      return;
+    }
+
+    if (Number(formData.amount) <= 0) {
+      alert("Το ποσό πρέπει να είναι θετικός αριθμός!");
       return;
     }
 
@@ -83,11 +93,13 @@ function AddTransaction({ onTransactionAdded }) {
 
         <input
           type="number"
-          step="5.00"
+          min="0"
+          step="10.00"
           name="amount"
           placeholder="Ποσό (€)"
           value={formData.amount}
           onChange={handleChange}
+          onKeyDown={(e) => (e.key === '-' || e.key === 'e') && e.preventDefault()}
           required
           style={styles.input}
         />
