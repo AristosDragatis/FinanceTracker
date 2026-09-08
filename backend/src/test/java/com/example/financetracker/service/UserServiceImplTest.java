@@ -3,12 +3,15 @@ package com.example.financetracker.service;
 import com.example.financetracker.domain.AppUser;
 import com.example.financetracker.exception.DuplicateResourceException;
 import com.example.financetracker.repository.AppUserRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -26,13 +29,24 @@ class UserServiceImplTest {
     @InjectMocks
     private UserServiceImpl userService; // testing of the real service
 
+    private static final String name = "TestUser";
+    private static final String email = "existing@test.com";
+    private static final String password = "password123";
+
+    private AppUser user;
+
+    @BeforeEach
+    void setUp() {
+        user = new AppUser();
+        user.setName(name);
+        user.setEmail(email);
+        user.setPassword(password);
+
+    }
+
     // Test 1 : successful registration
     @Test
     void registerUser_Success() {
-        // GIVEN
-        String name = "TestUser";
-        String email = "test@test.com";
-        String password = "password123";
 
         // when you get asked for this email/name, say they do not exist (false)
         when(appUserRepository.existsByEmail(email)).thenReturn(false);
@@ -44,7 +58,7 @@ class UserServiceImplTest {
 
         // THEN (check)
         assertNotNull(result); // We expect a user to be returned
-        assertEquals("test@test.com", result.getEmail()); // email must match
+        assertEquals("existing@test.com", result.getEmail()); // email must match
         assertEquals("hashedPassword", result.getPassword()); // Password must be hashed
 
         // check if save() got called once
@@ -54,8 +68,6 @@ class UserServiceImplTest {
     // Test 2: Fail due to existing Email
     @Test
     void registerUser_EmailAlreadyExists_ThrowsException() {
-        // GIVEN
-        String email = "existing@test.com";
         // Database: When you asked for this email, say that it exists (true)
         when(appUserRepository.existsByEmail(email)).thenReturn(true);
 
@@ -71,10 +83,20 @@ class UserServiceImplTest {
         verify(appUserRepository, never()).save(any(AppUser.class));
     }
 
-
-    // TODO: add login user testing
-
+    // TODO : create registerUser_NameAlreadyExists_ThrowsException test
 
     @Test
-    void
+    void loginUser_Success(){
+
+        when(appUserRepository.findByName(name)).thenReturn(Optional.of(user));
+        when(passwordEncoder.matches(password, user.getPassword())).thenReturn(true);
+
+        AppUser result = userService.loginUser(name, password);
+
+        assertNotNull(result);
+        assertEquals(user.getName(), result.getName());
+        assertEquals( user.getPassword(), result.getPassword());
+
+        verify(passwordEncoder, times(1)).matches(password, user.getPassword());
+    }
 }
