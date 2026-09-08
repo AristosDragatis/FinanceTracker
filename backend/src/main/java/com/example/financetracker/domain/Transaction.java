@@ -1,5 +1,6 @@
 package com.example.financetracker.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
@@ -23,6 +24,7 @@ public class Transaction {
     private Category category;
 
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private AppUser appUser;
