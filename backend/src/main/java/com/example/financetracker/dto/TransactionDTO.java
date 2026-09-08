@@ -2,7 +2,6 @@ package com.example.financetracker.dto;
 
 
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Null;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
@@ -28,7 +27,7 @@ public class TransactionDTO {
         return categoryName;
     }
 
-    public void setCategoryId(String categoryName) {
+    public void setCategoryName(String categoryName) {
         this.categoryName= categoryName;
     }
 
