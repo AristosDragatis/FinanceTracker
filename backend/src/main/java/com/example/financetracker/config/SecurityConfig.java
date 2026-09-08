@@ -1,5 +1,6 @@
 package com.example.financetracker.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -20,9 +21,12 @@ import java.util.List;
 @EnableWebSecurity
 public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final List<String> allowedOrigins;
 
-    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter){
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter,
+                          @Value("${app.cors.allowed-origins}") List<String> allowedOrigins){
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.allowedOrigins = allowedOrigins;
     }
 
     // tell spring which hashing algorithm to use
@@ -56,20 +60,20 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // Επιτρέπουμε ΜΟΝΟ στη React να μας μιλάει (βάλε το δικό σου port αν δεν είναι 5173)
-        configuration.setAllowedOrigins(List.of("http://localhost:5173"));
+        // Allow only React
+        configuration.setAllowedOrigins(allowedOrigins);
 
-        // Το OPTIONS είναι κρίσιμο! Ο browser το στέλνει κρυφά πριν το POST για να δει αν επιτρέπεται.
+        // OPTIONS is send before POST to check if allowed
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 
-        // Επιτρέπουμε όλα τα headers (συμπεριλαμβανομένου του Authorization με το Token)
+        // Allow all headers
         configuration.setAllowedHeaders(List.of("*"));
 
-        // Απαραίτητο για να περνάνε τα tokens σωστά
+        // mandatory , all tokens can pass
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        // Εφάρμοσε αυτόν τον κανόνα σε ΟΛΑ τα endpoints (/**)
+        // apply to all endpoints
         source.registerCorsConfiguration("/**", configuration);
 
         return source;
