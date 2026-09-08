@@ -21,12 +21,12 @@ public class UserServiceImpl implements UserService {
     public AppUser registerUser(String name, String email, String rawPassword){
         // check if email already exists
         if(appUserRepository.existsByEmail(email)){
-            throw new DuplicateResourceException("Email '" + email + "' already exists!");
+            throw new DuplicateResourceException("Email: " + email + " already exists!");
         }
 
         // check if name already exists
         if(appUserRepository.existsByName(name)){
-            throw new DuplicateResourceException("Name '" + name + "' already exists!");
+            throw new DuplicateResourceException("Name: " + name + " already exists!");
         }
 
         String encodedPassword = passwordEncoder.encode(rawPassword);

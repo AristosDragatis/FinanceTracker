@@ -1,6 +1,7 @@
 package com.example.financetracker.service;
 
 import com.example.financetracker.domain.AppUser;
+import com.example.financetracker.exception.DuplicateResourceException;
 import com.example.financetracker.repository.AppUserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -58,8 +59,8 @@ class UserServiceImplTest {
         // Database: When you asked for this email, say that it exists (true)
         when(appUserRepository.existsByEmail(email)).thenReturn(true);
 
-        // WHEN & THEN ( RuntimeException)
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+        // WHEN & THEN ( DuplicateResourceException )
+        DuplicateResourceException exception = assertThrows(DuplicateResourceException.class, () -> {
             userService.registerUser("AnyName", email, "AnyPassword");
         });
 
@@ -69,4 +70,11 @@ class UserServiceImplTest {
         // check if save() is invoked -> (exception)
         verify(appUserRepository, never()).save(any(AppUser.class));
     }
+
+
+    // TODO: add login user testing
+
+
+    @Test
+    void
 }
