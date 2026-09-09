@@ -83,7 +83,20 @@ class UserServiceImplTest {
         verify(appUserRepository, never()).save(any(AppUser.class));
     }
 
-    // TODO : create registerUser_NameAlreadyExists_ThrowsException test
+    @Test
+    void registerUser_NameAlreadyExists_ThrowsException(){
+
+        when(appUserRepository.existsByName(name)).thenReturn(true);
+
+        DuplicateResourceException exception = assertThrows(DuplicateResourceException.class, () -> {
+            userService.registerUser(name, "AnyEmail", "AnyPassword");
+        });
+
+        // Check if fail message is correct
+        assertEquals("Name: " + name + " already exists!", exception.getMessage());
+
+        verify(appUserRepository, never()).save(any(AppUser.class));
+    }
 
     @Test
     void loginUser_Success(){
@@ -115,4 +128,8 @@ class UserServiceImplTest {
         // verify that matches method is never invoked
         verify(passwordEncoder, never()).matches(anyString(), anyString());
     }
+
+
+    // TODO: add wrong password test
+    //@Test loginUser_WrongPassword
 }
