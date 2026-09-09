@@ -2,6 +2,7 @@ package com.example.financetracker.service;
 
 import com.example.financetracker.domain.AppUser;
 import com.example.financetracker.exception.DuplicateResourceException;
+import com.example.financetracker.exception.UnauthorizedException;
 import com.example.financetracker.repository.AppUserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -41,7 +42,6 @@ class UserServiceImplTest {
         user.setName(name);
         user.setEmail(email);
         user.setPassword(password);
-
     }
 
     // Test 1 : successful registration
@@ -98,5 +98,21 @@ class UserServiceImplTest {
         assertEquals( user.getPassword(), result.getPassword());
 
         verify(passwordEncoder, times(1)).matches(password, user.getPassword());
+    }
+
+    @Test
+    void loginUser_UserNotFound_ThrowsException(){
+        when(appUserRepository.findByName(name)).thenReturn(Optional.empty());
+
+        // WHEN THEN
+        UnauthorizedException exception = assertThrows(UnauthorizedException.class, () -> {
+            userService.loginUser(name, "AnyPassword");
+        });
+
+        // Check if fail message is correct
+        assertEquals("Invalid username or password", exception.getMessage());
+
+        // verify that matches method is never invoked
+        verify(passwordEncoder, never()).matches(anyString(), anyString());
     }
 }
