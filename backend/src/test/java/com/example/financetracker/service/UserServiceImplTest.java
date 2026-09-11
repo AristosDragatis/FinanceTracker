@@ -129,7 +129,19 @@ class UserServiceImplTest {
         verify(passwordEncoder, never()).matches(anyString(), anyString());
     }
 
+    @Test
+    void loginUser_WrongPassword_ThrowsException(){
+        when(appUserRepository.findByName(name)).thenReturn(Optional.of(user));
+        when(passwordEncoder.matches(password, user.getPassword())).thenReturn(false);
 
-    // TODO: add wrong password test
-    //@Test loginUser_WrongPassword
+        UnauthorizedException exception = assertThrows(UnauthorizedException.class, () -> {
+            userService.loginUser(name, password);
+        });
+
+
+        assertEquals("Invalid username or password", exception.getMessage());
+
+        verify(passwordEncoder, times(1)).matches(password, user.getPassword());
+    }
+    
 }
